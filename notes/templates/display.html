@@ -1,0 +1,10 @@
+<h2>Learning List</h2>
+
+<ul>
+  {% for learning_object in learning_objects %}
+    <li><a href="{% url 'learning_detail' learning_id=learning_object.id %}">{{ learning_object.description }}</a></li>
+  {% empty %}
+    <li>No learning objects available.</li>
+  {% endfor %}
+</ul>
+<a href="{% url 'learning_create' %}">Create Learning Object</a>
