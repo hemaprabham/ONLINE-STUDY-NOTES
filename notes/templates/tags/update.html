@@ -1,0 +1,16 @@
+<h2>Edit Tag Object</h2>
+
+<form method="post">
+  {% csrf_token %}
+  
+  <fieldset>
+    <div>
+      <label for="description">Description</label>
+    </div>
+    <div>
+      {{ form.description }}
+    </div>
+  </fieldset>
+  
+  <input type="submit" value="Update">
+</form>

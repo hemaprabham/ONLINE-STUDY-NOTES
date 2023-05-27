@@ -1,0 +1,11 @@
+<h2>Videos</h2>
+
+{% for video in videos %}
+  <h4>{{ video.title }}</h4>
+  <video controls>
+    <source src="{{ video.video.url }}" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+{% empty %}
+  <p>No videos available.</p>
+{% endfor %}

@@ -1,0 +1,8 @@
+<h2>Delete Prerequisite Object</h2>
+
+<p>Are you sure you want to delete the prerequisite object "{{ prerequisite_object.description }}"?</p>
+
+<form method="post">
+  {% csrf_token %}
+  <input type="submit" value="Delete">
+</form>

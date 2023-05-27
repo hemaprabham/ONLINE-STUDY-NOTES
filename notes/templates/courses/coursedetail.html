@@ -1,0 +1,47 @@
+{% block content %}
+    <h1>{{ course.name }}</h1>
+    <p>{{ course.description }}</p>
+    <p>Price: ${{ course.price }}</p>
+    <p>Discount: ${{ course.discount }}</p>
+    <p>Active: {% if course.active %}Yes{% else %}No{% endif %}</p>
+    <p>Length: {{ course.length }} hours</p>
+    <a href="{{ course.resource.url }}">Download Course Resource</a>
+    <img src="{{ course.thumbnail.url }}" alt="{{ course.name }} thumbnail">
+    
+    <h2>Tags:</h2>
+    <ul>
+    {% for tag in course.tag_set.all %}
+        <li>{{ tag.description }}</li>
+    {% empty %}
+        <li>No tags available.</li>
+    {% endfor %}
+    </ul>
+    
+    <h2>Prerequisites:</h2>
+    <ul>
+    {% for prereq in course.prerequisite_set.all %}
+        <li>{{ prereq.description }}</li>
+    {% empty %}
+        <li>No prerequisites available.</li>
+    {% endfor %}
+    </ul>
+    
+    <h2>Learning Objectives:</h2>
+    <ul>
+    {% for learning in course.learning_set.all %}
+        <li>{{ learning.description }}</li>
+    {% empty %}
+        <li>No learning objectives available.</li>
+    {% endfor %}
+    </ul>
+    
+    <h2>Videos:</h2>
+    {% if course.video_set.count %}
+        <ol>
+        {% for video in course.video_set.all %}
+            <li><a href="{{ video.video.url }}">{{ video.title }}</a></li>
+        {% empty %}
+            <li>No videos available.</li>
+        {% endfor %}
+        </ol>
+   

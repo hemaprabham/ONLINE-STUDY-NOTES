@@ -1,0 +1,10 @@
+<h2>Tag List</h2>
+
+<ul>
+  {% for tag_object in tag_objects %}
+    <li><a href="{% url 'tag_detail' tag_id=tag_object.id %}">{{ tag_object.description }}</a></li>
+  {% empty %}
+    <li>No tag objects available.</li>
+  {% endfor %}
+</ul>
+<a href="{% url 'tag_create' %}">Create Tag Object</a>

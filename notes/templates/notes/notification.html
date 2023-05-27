@@ -1,0 +1,20 @@
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                {{ message }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% if notifications %}
+    <ul class="messages">
+        {% for notification in notifications %}
+            <li{% if not notification.is_read %} class="unread"{% endif %}>
+                {{ notification.timestamp }} - {{ notification.message }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No notifications found.</p>
+{% endif %}

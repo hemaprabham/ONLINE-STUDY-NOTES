@@ -1,0 +1,25 @@
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+  
+    <!-- Video Title -->
+    <div class="form-group">
+      <label for="id_title">Title</label>
+      <input type="text" id="id_title" name="title" class="form-control">
+    </div>
+  
+    <!-- Video File -->
+    <div class="form-group">
+      <label for="id_video">Video File</label>
+      <input type="file" id="id_video" name="video" class="form-control-file">
+    </div>
+  
+    <!-- Is Preview Checkbox -->
+    <div class="form-check">
+      <input type="checkbox" id="id_is_preview" name="is_preview" class="form-check-input">
+      <label for="id_is_preview" class="form-check-label">Is Preview</label>
+    </div>
+  
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary">Upload</button>
+  </form>
+  

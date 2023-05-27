@@ -1,0 +1,7 @@
+<h2>Tag Detail</h2>
+
+<p>Description: {{ tag_object.description }}</p>
+<p>Course: {{ tag_object.course.name }}</p>
+
+<a href="{% url 'tag_update' tag_id=tag_object.id %}">Edit</a>
+<a href="{% url 'tag_delete' tag_id=tag_object.id %}">Delete</a>

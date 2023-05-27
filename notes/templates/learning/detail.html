@@ -1,0 +1,7 @@
+<h2>Learning Detail</h2>
+
+<p>Description: {{ learning_object.description }}</p>
+<p>Course: {{ learning_object.course.name }}</p>
+
+<a href="{% url 'learning_update' learning_id=learning_object.id %}">Edit</a>
+<a href="{% url 'learning_delete' learning_id=learning_object.id %}">Delete</a>

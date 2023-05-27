@@ -1,0 +1,10 @@
+<h2>Prerequisite List</h2>
+
+<ul>
+  {% for prerequisite_object in prerequisite_objects %}
+    <li><a href="{% url 'prerequisite_detail' prerequisite_id=prerequisite_object.id %}">{{ prerequisite_object.description }}</a></li>
+  {% empty %}
+    <li>No prerequisite objects available.</li>
+  {% endfor %}
+</ul>
+<a href="{% url 'prerequisite_create' %}">Create Prerequisite Object</a>

@@ -1,0 +1,7 @@
+<h2>Prerequisite Detail</h2>
+
+<p>Description: {{ prerequisite_object.description }}</p>
+<p>Course: {{ prerequisite_object.course.name }}</p>
+
+<a href="{% url 'prerequisite_update' prerequisite_id=prerequisite_object.id %}">Edit</a>
+<a href="{% url 'prerequisite_delete' prerequisite_id=prerequisite_object.id %}">Delete</a>

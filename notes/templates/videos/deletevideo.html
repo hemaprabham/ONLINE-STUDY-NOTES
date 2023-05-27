@@ -1,0 +1,10 @@
+<form method="post">
+    {% csrf_token %}
+  
+    <p>Are you sure you want to delete the video "<strong>{{ video.title }}</strong>"?</p>
+  
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="{% url 'course_detail' course_id=course.id %}" class="btn btn-secondary">Cancel</a>
+  </form>
+  
