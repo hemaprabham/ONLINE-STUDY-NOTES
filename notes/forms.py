@@ -49,17 +49,17 @@ class VideoForm(forms.ModelForm):
 class TagForm(forms.ModelForm):
     class Meta:
         model = Tag
-        fields = '__all__'   
+        fields = ['description', 'course']   
         
 class PrerequisiteForm(forms.ModelForm):
     class Meta:
         model = Prerequisite
-        fields = '__all__' 
+        fields = ['description', 'course'] 
         
 class LearningForm(forms.ModelForm):
     class Meta:
         model = Learning
-        fields = '__all__'                    
+        fields = ['description', 'course']                    
 
 class VideoForm(forms.ModelForm):
     class Meta:
