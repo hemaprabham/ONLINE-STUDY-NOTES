@@ -1,236 +1,208 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title> PRODUCT DISPLAY </title>
-        <style>
-            *{
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            body{
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                background: #eee;
-                font-family: 'raleway',sans-serif;
-                font-weight: bold;
-            }
-            a{
-                position: relative;
-                display: inline-block;
-                padding: 30px 50px;
-                margin: 90px 0;
-                color: #03e9f4;
-                text-decoration: none;
-                text-transform: uppercase;
-                transition: 0.5s;
-                overflow: hidden;
-                margin-right: 50px;
-                  
-            }
-              
-            a:hover{
-            background: #03e9f4;
-            color: #050801;
-            box-shadow: 0 0 5px #03e9f4,
-                        0 0 25px #03e9f4,
-                        0 0 50px #03e9f4,
-                        0 0 200px #03e9f4;
-            -webkit-box-reflect:below 1px linear-gradient(transition, #0005)            
-            }
-              
-              
-            a:nth-child(2){
-                filter: hue-rotate(270deg);
-            }
-            a span{
-                position: absolute;
-                display: block;
-            }
-            a span:nth-child(1){
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 2px;
-                background: linear-gradient(90deg,transparent,#03e9f4);
-                animation: animate1 1s linear infinite;
-            }
-              
-            @keyframes animate1{
-                0%{
-                    left: -100%;
-                }
-                50%,100%{
-                    left: 100%;
-                }
-            }
-              
-            a span:nth-child(2){
-                top: -100%;
-                right: 0;
-                width: 2px;
-                height: 100%;
-                background: linear-gradient(180deg,transparent,#03e9f4);
-                animation: animate2 1s linear infinite;
-                animation-delay: 1s;
-            }
-              
-            @keyframes animate2{
-                0%{
-                    top: -100%;
-                }
-                50%,100%{
-                    top: 100%;
-                }
-            }
-              
-              
-            a span:nth-child(3){
-                bottom: 0;
-                right: 0;
-                width:100%;
-                height: 2px;
-                background: linear-gradient(270deg,transparent,#03e9f4);
-                animation: animate3 1s linear infinite;
-            }
-            @keyframes animate3{
-                0%{
-                    right: -100%;
-                }
-                50%,100%{
-                    right: 100%;
-                }
-            }
-              
-            a span:nth-child(4){
-                bottom: -100%;
-                left: 0;
-                width: 2px;
-                height: 100%;
-                background: linear-gradient(360deg,transparent,#03e9f4);
-                animation: animate4 1s linear infinite;
-                animation-delay:1s;
-            }
-            @keyframes animate4{
-                0%{
-                    bottom: -100%;
-                }
-                50%,100%{
-                    bottom: 100%;
-                }
-            }
-            body{
-                padding: 10px;
-                font-family: Arial;
-                 
-            }
-            .top{
-                font-size: 3em;
-                font-weight: bold;
-                text-align: center;
-            }
-            .wrap{
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                grid-gap: 30px;
-                max-width: 1000px;
-                margin: auto;
-                margin-top: 50px;
-                 
-             
-            }
-            .box{
-                background: gray;
-                border-radius: 10px;
-            }
-            img{
-                width:100%;
-                height: 300px;
-            }
-            .social{
-                margin-top: -270px;
-                background: #2b3da6;
-                border-radius: 0 20px 20px 0 ;
-                position: absolute;
-                 
-                 
-            }
-            a{
-                display: flex;
-                margin: 5px;
-             
-                 
-                position: relative;
-                text-decoration: none;
-                font-size:15px;
-                color:#000;
-                padding: 5px;
-            }
-            .fa{
-                line-height: 30px;
-                width:30px;
-                height: 30px;
-                position: relative;
-                text-align: center;
-                 
-            }
-            .text{
-                text-align: center;
-                color:#fff;
-            }
-            p{
-                font-size:20px;
-            }
-            
-        </style>
-         
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="style.css">
- 
-    </head>
-<body>
-    <div class="top">
-        <a href="{% url 'learning_create' %}">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            UPLOAD
-        </a>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>product carad</title>
+    <link rel="stylesheet" href="css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
         
-    </div>
-    <div class="wrap">
-        {% for learning_object in learning_objects %}
-        <div class="box">
-            <img src="img1.jpg">
-            <div class="text">
-                <h1>{{ learning_object.title }}</h1>
-                <p>{{ learning_object.description }}</p>
-            </div>
-            <a href="{% url 'learning_edit' learning_id=learning_object.id %}">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                Edit
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;700;900&family=Raleway:wght@100;300;500;700&display=swap');
+
+:root{
+    --bodyBack: #ffeaed;
+    --textColor: #1b2741;
+    --starColor: #f67034;
+    --sectionBack: #f7f6f9;
+}
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+}
+body{
+    background-color: var(--bodyBack);
+    min-height: 100vh;
+    display: grid;
+    place-content: center;
+}
+.container{
+    width: 80vw;
+    height:80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+.header{
+    width: 100%;
+    text-align: center;
+}
+.header h1{
+    font-size: 4em;
+    text-transform: uppercase;
+    color: var(--textColor);
+}
+.products{
+    width: 100%;
+    align-self: center;
+    height: 70%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+.product{
+    position: relative;
+    background-color: #0e0e0f;
+    width: 350px;
+    height: 50%;
+    box-shadow: 0 5px 20px rgba(169, 53, 53, 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px 20px 40px;
+    border-radius: 10px;
+    transition: .3s;
+}
+.product:hover{
+    transform: translateY(-15px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+}
+.image{
+    width:100%;
+    height: 60%;
+    display: grid;
+    place-content: center;
+}
+.image img{
+    width: 240px;
+}
+.namePrice{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    
+}
+.namePrice h3{
+    font-size: 2em;
+    text-transform: capitalize;
+    color: #fff;
+    text-align: center;
+}
+.namePrice span{
+    font-size: 1.5em;
+    color: var(--starColor);
+}
+.product p{
+    font-size: 18px;
+    line-height: 100px;
+    text-align: center;
+    color: #fff;
+}
+.stars svg{
+    font-size: 1.3em;
+    color: var(--starColor);
+}
+.bay{
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    
+  
+}
+.bay button{
+    border-radius: 7px;
+    border: none;
+    color: var(--sectionBack);
+    font-size: 18px;
+    text-transform: capitalize;
+    cursor: pointer;
+    transition: .5s;
+        position: relative;
+        display: inline-block;
+        font-size: 1.5m;
+        letter-spacing: .1em;
+        color: #0ef;
+        text-decoration: none;
+        text-transform: uppercase;
+        border: 2px solid #0ef;
+        padding: 10px 30px;
+        z-index: 1;
+        overflow: hidden;
+        transition: color 1s, box-shadow 1s;
+}
+.bay button:hover{
+    transition-delay: 0s, 1s;
+        color: #fff;
+        box-shadow:
+            0 0 10px #0ef,
+            0 0 20px #0ef,
+            0 0 40px #0ef,
+            0 0 80px #0ef,
+            0 0 160px #0ef;
+}
+.bay button::before{
+    content: '';
+        position: absolute;
+        top: 0;
+        left: -50px;
+        width: 0;
+        height: 100%;
+        background: #0ef;
+        transform: skewX(35deg);
+        z-index: -1;
+        transition: 1s;
+        
+}
+.bay button:hover:before {
+    width: 100%;
+}
+
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ALL LEARNINGS</h1>
+        </div>
+        <div class="bay">
+            <a href="{% url 'learning_create' %}">
+                <button>UPLOAD</button>
             </a>
-            <a href="{% url 'learning_delete' learning_id=learning_object.id %}">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                Delete
+            <a href="{% url 'admin1' %}">
+                <button>ADMIN DASHBOARD</button>
             </a>
         </div>
-        {% empty %}
-        <p>No learning objects available.</p>
-        {% endfor %}
+        
+        
+        <div class="products">
+            {% for learning_object in learning_objects %}
+            <div class="product">
+                <div class="namePrice">
+                    <h3>COURSE:{{ learning_object.course}}</h3>
+                </div>
+                <p>DESCRIPTION:{{ learning_object.description }}</p>
+                <div class="bay">
+                    <a href="{% url 'learning_update' learning_id=learning_object.id %}">
+                        <button>EDIT</button>
+                    </a>
+                    <a href="{% url 'learning_delete' learning_id=learning_object.id %}">
+                        <button>DELETE</button>
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <p>No learning objects available.</p>
+            {% endfor %}
+        </div>
     </div>
     
-         
-        
-    </div>
+    
+    <script src="js/all.min.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>

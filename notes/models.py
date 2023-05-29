@@ -150,3 +150,13 @@ class Rating(models.Model):
 
     class Meta:
         unique_together = ('Customer', 'Course')
+
+#chat
+class Chat(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    message = models.TextField()
+    response = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.customer}: {self.message}'

@@ -79,3 +79,5 @@ admin.site.register(Course , CourseAdmin)
 admin.site.register(Video)
 admin.site.register(Payment , PaymentAdmin)
 admin.site.register(UserCourse , UserCourseAdminModel)
+#chat
+admin.site.register(Chat)

@@ -7,6 +7,9 @@ from django.views.generic.list import ListView
 from django.core.exceptions import ValidationError
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+import openai
+
 
 
 # Create your views here.
@@ -294,7 +297,7 @@ def tag_update(request, tag_id):
         form = TagForm(request.POST, instance=tag)
         if form.is_valid():
             form.save()
-            return redirect('tag_detail', tag_id=tag.id)
+            return redirect('tag_list')
     else:
         form = TagForm(instance=tag)
     return render(request, 'tags/update.html', {'form': form, 'tag': tag})
@@ -332,7 +335,7 @@ def prerequisite_update(request, prerequisite_id):
         form = PrerequisiteForm(request.POST, instance=prerequisite_object)
         if form.is_valid():
             form.save()
-            return redirect('prerequisite_detail', prerequisite_id=prerequisite_object.id)
+            return redirect('prerequisite_list')
     else:
         form = PrerequisiteForm(instance=prerequisite_object)
     return render(request, 'prerequisites/update.html', {'form': form, 'prerequisite_object': prerequisite_object})
@@ -369,7 +372,7 @@ def learning_update(request, learning_id):
         form = LearningForm(request.POST, instance=learning_object)
         if form.is_valid():
             form.save()
-            return redirect('learning_detail', learning_id=learning_object.id)
+            return redirect('learning_list')
     else:
         form = LearningForm(instance=learning_object)
     return render(request, 'learning/update.html', {'form': form, 'learning_object': learning_object})
@@ -380,5 +383,23 @@ def learning_delete(request, learning_id):
         learning_object.delete()
         return redirect('learning_list')
     return render(request, 'learning/delete.html', {'learning_object': learning_object})
+#admin dashboard
+def admin1(request):
+    return render(request,"notes/admin1.html")
+
+#chat
+def chatbot(request):
+    chats = Chat.objects.filter(user=request.user)
+
+    if request.method == 'POST':
+        message = request.POST.get('message')
+        response = ask_openai(message)
+        
+        
+        chat = Chat(user=request.user, message=message, response=response, created_at=timezone.now())
+        chat.save()
+        return JsonResponse({'message': message, 'response': response})
+    return render(request, 'chatbot/chatbot.html', {'chats': chats})
+
 
 

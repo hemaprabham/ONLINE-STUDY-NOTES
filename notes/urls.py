@@ -52,5 +52,10 @@ urlpatterns = [
     path('prerequisites/<int:prerequisite_id>/update/', views.prerequisite_update, name='prerequisite_update'),
     path('prerequisites/<int:prerequisite_id>/delete/', views.prerequisite_delete, name='prerequisite_delete'),
 
+    #admin dash
+    path('admin1/',views.admin1,name='admin1'),
+    
+    #chatbot
+    path('chat/', views.chatbot, name='chatbot'),
 
 ]
