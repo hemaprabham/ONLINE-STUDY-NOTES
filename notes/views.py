@@ -230,48 +230,40 @@ def coursedash(request):
     return render(request,'courses/coursedashboard.html')
 
 #videos crud
-def upload_video(request, slug):
-    course = get_object_or_404(Course, slug=slug)
+def upload_video(request):
     if request.method == 'POST':
         form = VideoForm(request.POST, request.FILES)
         if form.is_valid():
-            video = form.save(commit=False)
-            video.course = course
-            video.save()
-            return redirect('courses/coursedetail.html', slug=course.slug)
+            form.save()
+            return redirect('videos_list')
     else:
         form = VideoForm()
-    return render(request, 'videos/uploadvideo.html', {'form': form, 'course': course})
+    return render(request, 'videos/uploadvideo.html', {'form': form})
 
-def edit_video(request, slug, serial_number):
-    course = get_object_or_404(Course, slug=slug)
-    video = get_object_or_404(Video, course=course, serial_number=serial_number)
+def edit_video(request, video_id):
+    video = get_object_or_404(Video, id=video_id)
     if request.method == 'POST':
         form = VideoForm(request.POST, request.FILES, instance=video)
         if form.is_valid():
             form.save()
-            return redirect('courses/coursedetail.html', slug=course.slug)
+            return redirect('videos_list')
     else:
         form = VideoForm(instance=video)
-    return render(request, 'videos/editvideo.html', {'form': form, 'course': course, 'video': video})
-
-def delete_video(request, slug, serial_number):
-    course = get_object_or_404(Course, slug=slug)
-    video = get_object_or_404(Video, course=course, serial_number=serial_number)
+    return render(request, 'videos/editvideo.html', {'form': form, 'video': video})
+def delete_video(request, video_id):
+    video = get_object_or_404(Video, id=video_id)
     if request.method == 'POST':
         video.delete()
-        return redirect('courses/coursedetail.html', slug=course.slug)
-    return render(request, 'videos/deletevideo.html', {'course': course, 'video': video})
+        return redirect('videos_list')
+    return render(request, 'videos/deletevideo.html', {'video': video})
 
 def video_detail(request, video_id):
     video = get_object_or_404(Video, id=video_id)
-    return render(request, 'video_detail.html', {'video': video})
+    return render(request, 'videos/view_video.html', {'video': video})
 
-def videos_view(request, course_id):
-    course = get_object_or_404(Course, id=course_id)
-    videos = Video.objects.filter(course=course)
-    return render(request, 'videos/videosdisplay.html', {'course': course, 'videos': videos})
-
+def videos_list(request):
+    videos = Video.objects.all()
+    return render(request, 'videos/videodisplay.html', {'videos': videos})
 #tags
 def tag_list(request):
     tags = Tag.objects.all()
@@ -401,5 +393,162 @@ def chatbot(request):
         return JsonResponse({'message': message, 'response': response})
     return render(request, 'chatbot/chatbot.html', {'chats': chats})
 
+#question
+def question_detail(request, question_id):
+    question = Question.objects.get(pk=question_id)
+    answers = Answer.objects.filter(question=question)
+    return render(request, 'question_detail.html', {'question': question, 'answers': answers})
+
+@login_required
+def answer_question(request, question_id):
+    question = Question.objects.get(pk=question_id)
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        Answer.objects.create(question=question, content=content, user=request.user)
+        return redirect('question_detail', question_id=question_id)
+    return render(request, 'answer_question.html', {'question': question})
 
 
+#course userside
+#usercourse
+from django.views.generic import ListView
+from django.utils.decorators import method_decorator
+from django.shortcuts import HttpResponse
+
+
+
+@method_decorator(login_required(login_url='login') , name='dispatch')
+class MyCoursesList(ListView):
+    template_name = 'user/my_courses.html'
+    context_object_name = 'user_courses'
+    def get_queryset(self):
+        return UserCourse.objects.filter(username = self.request.username)
+
+
+def coursePage(request , slug):
+    course = Course.objects.get(slug  = slug)
+    serial_number  = request.GET.get('lecture')
+    videos = course.video_set.all().order_by("serial_number")
+
+    if serial_number is None:
+        serial_number = 1 
+
+    video = Video.objects.get(serial_number = serial_number , course = course)
+
+    if (video.is_preview is False):
+
+        if request.user.is_authenticated is False:
+            return redirect("login")
+        else:
+            username = request.username
+            try:
+                user_course = UserCourse.objects.get(username = username  , course = course)
+            except:
+                return redirect("check-out" , slug=course.slug)
+        
+        
+    context = {
+        "course" : course , 
+        "video" : video , 
+        'videos':videos
+    }
+    return  render(request , template_name="user/course_page.html" , context=context )
+#checkout.py
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from time import time
+from study.settings import *
+
+
+import razorpay
+client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))
+
+
+def checkout(request , slug):
+    course = Course.objects.get(slug  = slug)
+    username = request.username
+    action = request.GET.get('action')
+    order = None
+    payment = None
+    error = None
+    try:
+        user_course = UserCourse.objects.get(username = username , course = course)
+        error = "You are Already Enrolled in this Course"
+    except:
+        pass
+    amount=None
+    if error is None : 
+        amount =  int((course.price - ( course.price * course.discount * 0.01 )) * 100)
+   # if ammount is zero dont create paymenty , only save emrollment obbect 
+    
+    if amount==0:
+        userCourse = UserCourse(username = username , course = course)
+        userCourse.save()
+        return redirect('my-courses')   
+                # enroll direct
+    if action == 'create_payment':
+
+            currency = "INR"
+            notes = {
+                "email" : user.email, 
+                "name" : f'{user.first_name} {user.last_name}'
+            }
+            reciept = f"study-{int(time())}"
+            order = client.order.create(
+                {'receipt' :reciept , 
+                'notes' : notes , 
+                'amount' : amount ,
+                'currency' : currency
+                }
+            )
+
+            payment = Payment()
+            payment.username  = username
+            payment.course = course
+            payment.order_id = order.get('id')
+            payment.save()
+        
+    context = {
+        "course" : course , 
+        "order" : order, 
+        "payment" : payment, 
+        "username" : username , 
+        "error" : error
+    }
+    return  render(request , template_name="user/check_out.html" , context=context )    
+
+#verify payment
+@login_required(login_url='/login')
+@csrf_exempt
+def verifyPayment(request):
+    if request.method == "POST":
+        data = request.POST
+        context = {}
+        print(data)
+        try:
+            client.utility.verify_payment_signature(data)
+            razorpay_order_id = data['razorpay_order_id']
+            razorpay_payment_id = data['razorpay_payment_id']
+
+            payment = Payment.objects.get(order_id = razorpay_order_id)
+            payment.payment_id  = razorpay_payment_id
+            payment.status =  True
+            
+            userCourse = UserCourse(username = payment.username , course = payment.course)
+            userCourse.save()
+
+            print("UserCourse" ,  userCourse.id)
+
+            payment.user_course = userCourse
+            payment.save()
+
+            return redirect('my-courses')   
+
+        except:
+            return HttpResponse("Invalid Payment Details")            
+
+#home.py
+def home_page_view(request):
+    courses = Course.objects.filter(active=True)
+    context = {'courses': courses}
+    return render(request, 'notes/home.html', context)

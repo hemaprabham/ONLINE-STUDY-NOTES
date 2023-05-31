@@ -80,6 +80,7 @@ class Notification(models.Model):
     
  #courses   
 class Course(models.Model):
+
     name = models.CharField(max_length = 50 , null = False)
     slug = models.CharField(max_length = 50 , null = False , unique = True)
     description = models.CharField(max_length = 200 , null = True)
@@ -90,7 +91,8 @@ class Course(models.Model):
     date = models.DateTimeField(auto_now_add= True) 
     resource = models.FileField(upload_to = "resource/")
     length = models.IntegerField(null=False)
-
+    username = models.ForeignKey(Customer , null = False , on_delete=models.CASCADE)
+    
     def __str__(self):
         return self.name
 
@@ -113,16 +115,18 @@ class Learning(CourseProperty):
     
 class Video(models.Model):
     title  = models.CharField(max_length = 100 , null = False)
+    thumbnail = models.ImageField(upload_to = 'VIDEOS/')
     course = models.ForeignKey(Course , null = False , on_delete=models.CASCADE)
     serial_number = models.IntegerField(null=False)
     video = models.FileField(upload_to = "video/%y",validators=[file_size])
     is_preview = models.BooleanField(default = False)
-
+    username = models.ForeignKey(Customer , null = False , on_delete=models.CASCADE)
+    
     def __str__(self):
         return self.title
 
 class UserCourse(models.Model):
-    username = models.ForeignKey(User , null = False , on_delete=models.CASCADE)
+    username = models.ForeignKey(Customer , null = False , on_delete=models.CASCADE)
     course = models.ForeignKey(Course , null = False , on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
 
@@ -135,7 +139,7 @@ class Payment(models.Model):
     order_id = models.CharField(max_length = 50 , null = False)
     payment_id = models.CharField(max_length = 50)
     user_course = models.ForeignKey(UserCourse , null = True , blank = True ,  on_delete=models.CASCADE)
-    user = models.ForeignKey(User ,  on_delete=models.CASCADE)
+    username = models.ForeignKey(Customer ,  on_delete=models.CASCADE)
     course = models.ForeignKey(Course , on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=False)
@@ -160,3 +164,18 @@ class Chat(models.Model):
 
     def __str__(self):
         return f'{self.customer}: {self.message}'
+    
+#question and answer
+class Question(models.Model):
+    title = models.CharField(max_length=100)
+    content = models.TextField()
+    username = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Answer(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    content = models.TextField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)    
+    
+    

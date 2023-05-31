@@ -13,7 +13,7 @@ class PostForm(forms.ModelForm):
     
     class Meta:
         model = Post
-        fields = ('title', 'thumbnail', 'pdf', 'desc')
+        fields = ('title', 'category','thumbnail', 'pdf', 'desc')
 
     def clean_pdf(self):
         pdf = self.cleaned_data['pdf']
@@ -40,7 +40,7 @@ class CourseForm(forms.ModelForm):
 class VideoForm(forms.ModelForm):
     class Meta:
         model = Video
-        fields = ['title', 'serial_number', 'video', 'is_preview']
+        fields = '__all__'
         widgets = {
             'is_preview': forms.CheckboxInput(attrs={'class': 'form-check-input'})
         }            

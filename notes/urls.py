@@ -1,5 +1,7 @@
-from django.urls import path
+from django.urls import path,include
 from . import views
+from django.conf.urls.static import static
+from django.conf import settings
 
 
 urlpatterns = [
@@ -27,9 +29,11 @@ urlpatterns = [
     path('course_detail/<slug:slug>/',views.course_detail, name='course_detail'),
     path('coursedash/',views.coursedash,name='coursedash'),
     #videos
-    path('course/<int:course_id>/video/upload/', views.upload_video, name='upload_video'),
-    path('course/<int:course_id>/video/<int:video_id>/edit/', views.edit_video, name='edit_video'),
-    path('video/<int:pk>/', views.video_detail, name='video_detail'),
+    path('create/', views.upload_video, name='upload_video'),
+    path('<int:video_id>/', views.video_detail, name='video_detail'),
+    path('<int:video_id>/edit/', views.edit_video, name='edit_video'),
+    path('<int:video_id>/delete/', views.delete_video, name='delete_video'),
+    path('list/', views.videos_list, name='videos_list'),
     
     # Learning URLs
     path('learning/', views.learning_list, name='learning_list'),
@@ -55,7 +59,15 @@ urlpatterns = [
     #admin dash
     path('admin1/',views.admin1,name='admin1'),
     
-    #chatbot
-    path('chat/', views.chatbot, name='chatbot'),
-
+    
+    
+    #usersidecourse
+    path('course/<str:slug>', views.coursePage , name = 'coursepage'),
+    path('check-out/<str:slug>', views.checkout , name = 'check-out'),
+    path('verify_payment', views.verifyPayment , name = 'verify_payment'),
+    path('home/', views.home_page_view , name = 'home'),
+    
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

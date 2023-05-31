@@ -165,11 +165,15 @@ button{
         <div>
             <button type="button" style="--clr:#ff0f5b" onclick="location.href='{% url 'upload'%}'" >Upload</button>
         </div>
-        {% if details %}
+        
+        
+        
          <div class="box mySwiper">
+            
             <div class="content swiper-wrapper">
                 {%for i in details %}
                 <div class="card swiper-slide">
+                    <div class="card">
                         <div class="card-content">
                             <div class="image">
                                  <a href='{{ i.pdf.url}}'><img src="{{ i.thumbnail.url}}" alt=""></a>
@@ -191,15 +195,14 @@ button{
                             <button type="button" style="--clr:#ff0f5b" onclick="location.href='{% url 'delete' pk=i.pk %}'">Delete </button>
                         </div>
                     </div> 
+                    </div>
                 </div>
-                    {%endfor%}  
-        
-                </div>
+                {%endfor%}
+            </div>
             <div class="swiper-button-next"></div>
             <div class="swiper-button-prev"></div>
             <div class="swiper-pagination"></div>
         </div>
-        {% endif %}
         <div>
             <button type="button" style="--clr:#ff0f5b" onclick="location.href='{% url 'user' %}'" >Go to Userdashboard</button>
         </div>
