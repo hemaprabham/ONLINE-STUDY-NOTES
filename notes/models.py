@@ -123,12 +123,12 @@ class Video(models.Model):
         return self.title
 
 class UserCourse(models.Model):
-    username = models.ForeignKey(Customer , null = False , on_delete=models.CASCADE)
+    user = models.ForeignKey(Customer , null = False , on_delete=models.CASCADE)
     course = models.ForeignKey(Course , null = False , on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.username} - {self.course.name}'
+        return f'{self.user} - {self.course.name}'
     
     
 

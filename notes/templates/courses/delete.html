@@ -1,10 +1,16 @@
+<div class="wrapper">
+    <div class="profile">
+        <div class="content">
+            {% block content %}
 
-{% block content %}
-  <h2>Delete Course</h2>
-  <p>Are you sure you want to delete the course "{{ course.name }}"?</p>
-  <form method="post" action="{% url 'delete_course' course.slug %}">
-    {% csrf_token %}
-    <input type="submit" value="Delete">
-  </form>
-  <a href="{% url 'course_list' %}">Cancel</a>
-{% endblock %}
+            <h1>Delete Course</h1>
+            <p>Are you sure you want to delete the course "{{ course.name }}"?</p>
+            <form method="post" action="{% url 'delete_course' slug=course.slug %}">
+                {% csrf_token %}
+                <input type="submit" class="Btn" value="Delete" />
+                <a href="{% url 'course_list' %}" class="Btn cancel">Cancel</a>
+            </form>
+            {% endblock %}
+        </div>
+    </div>
+</div>

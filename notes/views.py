@@ -213,7 +213,7 @@ def delete_course(request, slug):
     course = get_object_or_404(Course, slug=slug)
     if request.method == 'POST':
         course.delete()
-        return redirect('course_list')
+        return redirect('course_list')  # Assuming 'courses_list' is the name of the view to display the list of courses
     return render(request, 'courses/delete.html', {'course': course})
 
 def course_list(request):
@@ -379,19 +379,6 @@ def learning_delete(request, learning_id):
 def admin1(request):
     return render(request,"notes/admin1.html")
 
-#chat
-def chatbot(request):
-    chats = Chat.objects.filter(user=request.user)
-
-    if request.method == 'POST':
-        message = request.POST.get('message')
-        response = ask_openai(message)
-        
-        
-        chat = Chat(user=request.user, message=message, response=response, created_at=timezone.now())
-        chat.save()
-        return JsonResponse({'message': message, 'response': response})
-    return render(request, 'chatbot/chatbot.html', {'chats': chats})
 
 #question
 def question_detail(request, question_id):
@@ -417,12 +404,14 @@ from django.shortcuts import HttpResponse
 
 
 
-@method_decorator(login_required(login_url='login') , name='dispatch')
 class MyCoursesList(ListView):
     template_name = 'user/my_courses.html'
     context_object_name = 'user_courses'
     def get_queryset(self):
-        return UserCourse.objects.filter(username = self.request.username)
+        c = self.request.session.get("username")
+        cus=Customer.objects.get(username=c)
+        user = cus
+        return UserCourse.objects.filter(user = cus)
 
 
 def coursePage(request , slug):
@@ -440,60 +429,67 @@ def coursePage(request , slug):
         if request.user.is_authenticated is False:
             return redirect("login")
         else:
-            username = request.username
+            c=request.session["username"]
+            cus=Customer.objects.get(username=c)
+            user=cus
             try:
-                user_course = UserCourse.objects.get(username = username  , course = course)
+                user_course = UserCourse.objects.get(user = user  , course = course)
             except:
-                return redirect("check-out" , slug=course.slug)
-        
+                return  render(request , "user/check_out.html" , slug=course.clug )
         
     context = {
         "course" : course , 
         "video" : video , 
         'videos':videos
     }
-    return  render(request , template_name="user/course_page.html" , context=context )
+    return  render(request , "user/course_page.html" , context=context )
 #checkout.py
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from time import time
 from study.settings import *
+from notes.models import Course , Video , Payment , UserCourse,Customer
+from django.shortcuts import HttpResponse
+
 
 
 import razorpay
 client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))
 
 
+@login_required(login_url='/login')
 def checkout(request , slug):
+    c=request.session["username"]
+    cus=Customer.objects.get(username=c)
     course = Course.objects.get(slug  = slug)
-    username = request.username
+    user = cus
     action = request.GET.get('action')
     order = None
     payment = None
     error = None
     try:
-        user_course = UserCourse.objects.get(username = username , course = course)
+        user_course = UserCourse.objects.get(user = user  , course = course)
         error = "You are Already Enrolled in this Course"
     except:
         pass
     amount=None
     if error is None : 
         amount =  int((course.price - ( course.price * course.discount * 0.01 )) * 100)
-   # if ammount is zero dont create paymenty , only save emrollment obbect 
+   # if amount is zero dont create paymenty , only save emrollment obbect 
     
     if amount==0:
-        userCourse = UserCourse(username = username , course = course)
+        userCourse = UserCourse(user = user , course = course)
         userCourse.save()
-        return redirect('my-courses')   
+        return render(request,'user/my_courses.html')   
                 # enroll direct
     if action == 'create_payment':
 
             currency = "INR"
             notes = {
                 "email" : user.email, 
-                "name" : f'{user.first_name} {user.last_name}'
+                "name" : f'{user.name}'
             }
-            reciept = f"study-{int(time())}"
+            reciept = f"notes-{int(time())}"
             order = client.order.create(
                 {'receipt' :reciept , 
                 'notes' : notes , 
@@ -503,22 +499,23 @@ def checkout(request , slug):
             )
 
             payment = Payment()
-            payment.username  = username
+            payment.user  = user
             payment.course = course
             payment.order_id = order.get('id')
             payment.save()
-        
+
+
+    
     context = {
         "course" : course , 
         "order" : order, 
         "payment" : payment, 
-        "username" : username , 
+        "user" : user , 
         "error" : error
     }
-    return  render(request , template_name="user/check_out.html" , context=context )    
+    return  render(request , "user/check_out.html" , context=context )    
 
 #verify payment
-@login_required(login_url='/login')
 @csrf_exempt
 def verifyPayment(request):
     if request.method == "POST":
@@ -534,7 +531,7 @@ def verifyPayment(request):
             payment.payment_id  = razorpay_payment_id
             payment.status =  True
             
-            userCourse = UserCourse(username = payment.username , course = payment.course)
+            userCourse = UserCourse(user = payment.user , course = payment.course)
             userCourse.save()
 
             print("UserCourse" ,  userCourse.id)
@@ -548,6 +545,7 @@ def verifyPayment(request):
             return HttpResponse("Invalid Payment Details")            
 
 #home.py
+from notes.models import Course , Video , Payment , UserCourse,Customer
 def home_page_view(request):
     courses = Course.objects.filter(active=True)
     context = {'courses': courses}

@@ -1,5 +1,6 @@
 from django import template
 import math
+from django.shortcuts import  get_object_or_404
 
 from notes.models import UserCourse , Course ,Payment,Customer
 register = template.Library()
@@ -23,15 +24,15 @@ def rupee(price):
 
 @register.simple_tag
 def is_enrolled(request , course):
-    c=request.session["username"]
-    cus=Customer.objects.get(username=c)
-    username = None
-    if not request.username.is_authenticated:
+   
+    user = None
+    if not request.user.is_authenticated:
         return False
         # i you are enrooled in this course you can watch every video
-    username = request.username
+    user = request.user
     try:
-        user_course = UserCourse.objects.get(username = username  , course = course)
+        
+        user_course = UserCourse.objects.get(user = user, course = course)
         return True
     except:
         return False

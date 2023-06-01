@@ -2,6 +2,7 @@ from django.urls import path,include
 from . import views
 from django.conf.urls.static import static
 from django.conf import settings
+from  notes.views import  MyCoursesList
 
 
 urlpatterns = [
@@ -23,12 +24,13 @@ urlpatterns = [
     path('favorites/',views.favorites, name='favorites'),
     #courses
     path('uploadcourse/',views.upload_course,name='courseupload'),
-    path('deletecourse/<slug:slug>/',views.delete_course,name='deletecourse'),
+    path('delete_course/<slug:slug>/', views.delete_course, name='delete_course'),
     path('editcourse/<slug:slug>/',views.edit_course, name='edit_course'),
     path('courselist/',views.course_list,name='course_list'),
     path('course_detail/<slug:slug>/',views.course_detail, name='course_detail'),
     path('coursedash/',views.coursedash,name='coursedash'),
     #videos
+    
     path('create/', views.upload_video, name='upload_video'),
     path('<int:video_id>/', views.video_detail, name='video_detail'),
     path('<int:video_id>/edit/', views.edit_video, name='edit_video'),
@@ -62,10 +64,12 @@ urlpatterns = [
     
     
     #usersidecourse
-    path('course/<str:slug>', views.coursePage , name = 'coursepage'),
-    path('check-out/<str:slug>', views.checkout , name = 'check-out'),
-    path('verify_payment', views.verifyPayment , name = 'verify_payment'),
     path('home/', views.home_page_view , name = 'home'),
+    path('my-courses', MyCoursesList.as_view() , name = 'my-courses'),
+    path('course/<str:slug>/', views.coursePage , name = 'coursepage'),
+    path('checkout/<str:slug>/', views.checkout, name='checkout'),
+    path('verify_payment',views.verifyPayment , name = 'verify_payment'),
+
     
 ]
 
