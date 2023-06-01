@@ -127,7 +127,15 @@ body{
     <div class="container">
 
         <div class="header">
-            <h1>COURSEs</h1>
+            <h1>COURSES</h1>
+        </div>
+        <div class="bay">
+            <a href="{% url 'courseupload' %}">
+                <button>Upload</button>
+            </a>
+            <a href="{% url 'admin1' %}">
+                <button>ADMIN DASHBOARD</button>
+            </a>
         </div>
 
         <div class="products">
@@ -143,7 +151,7 @@ body{
                 <p>DESCRIPTION:{{ course.description }}</p>
                 <p>SLUG:{{ course.slug }}</p>
                 <p>DISCOUNT:{{ course.discount }}</p>
-                <p>CORSE DATE:{{ course.date }}</p>
+                <p>COuRSE DATE:{{ course.date }}</p>
                 <p>COURSE DURATION:{{ course.length}}</p>
                 <!--<div class="stars">
                     <i class="fa-solid fa-star"></i>
@@ -154,8 +162,13 @@ body{
                 </div>-->
                 <BR>
                 <div class="bay">
-                    <button> Edit </button>
-                    <button> Delete </button>
+                    <a href="{% url 'edit_course' slug=course.slug %}">
+                        <button>EDIT</button>
+                    </a>
+                    <a href="{% url 'deletecourse' slug=course.slug %}">
+                        <button>DELETE</button>
+                    </a>
+                    
                 </div>
             </div>
 

@@ -40,7 +40,7 @@ class CourseForm(forms.ModelForm):
 class VideoForm(forms.ModelForm):
     class Meta:
         model = Video
-        fields = '__all__'
+        fields = ['title', 'thumbnail', 'course', 'serial_number', 'video', 'is_preview']
         widgets = {
             'is_preview': forms.CheckboxInput(attrs={'class': 'form-check-input'})
         }            

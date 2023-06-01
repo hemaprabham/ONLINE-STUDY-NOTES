@@ -23,7 +23,7 @@ urlpatterns = [
     path('favorites/',views.favorites, name='favorites'),
     #courses
     path('uploadcourse/',views.upload_course,name='courseupload'),
-    path('deletecourse/',views.delete_course,name='deletecourse'),
+    path('deletecourse/<slug:slug>/',views.delete_course,name='deletecourse'),
     path('editcourse/<slug:slug>/',views.edit_course, name='edit_course'),
     path('courselist/',views.course_list,name='course_list'),
     path('course_detail/<slug:slug>/',views.course_detail, name='course_detail'),

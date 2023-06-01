@@ -80,7 +80,6 @@ class Notification(models.Model):
     
  #courses   
 class Course(models.Model):
-
     name = models.CharField(max_length = 50 , null = False)
     slug = models.CharField(max_length = 50 , null = False , unique = True)
     description = models.CharField(max_length = 200 , null = True)
@@ -91,7 +90,6 @@ class Course(models.Model):
     date = models.DateTimeField(auto_now_add= True) 
     resource = models.FileField(upload_to = "resource/")
     length = models.IntegerField(null=False)
-    username = models.ForeignKey(Customer , null = False , on_delete=models.CASCADE)
     
     def __str__(self):
         return self.name
@@ -120,7 +118,6 @@ class Video(models.Model):
     serial_number = models.IntegerField(null=False)
     video = models.FileField(upload_to = "video/%y",validators=[file_size])
     is_preview = models.BooleanField(default = False)
-    username = models.ForeignKey(Customer , null = False , on_delete=models.CASCADE)
     
     def __str__(self):
         return self.title

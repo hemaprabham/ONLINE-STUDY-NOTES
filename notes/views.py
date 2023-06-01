@@ -204,7 +204,7 @@ def edit_course(request, slug):
         form = CourseForm(request.POST, request.FILES, instance=course)
         if form.is_valid():
             course = form.save()
-            return redirect('courses/coursedetail', slug=course.slug)
+            return redirect('course_list')
     else:
         form = CourseForm(instance=course)
     return render(request, 'courses/editcourse.html', {'form': form})
@@ -213,8 +213,8 @@ def delete_course(request, slug):
     course = get_object_or_404(Course, slug=slug)
     if request.method == 'POST':
         course.delete()
-        return redirect('home')
-    return render(request, 'delete_course.html', {'course': course})
+        return redirect('course_list')
+    return render(request, 'courses/delete.html', {'course': course})
 
 def course_list(request):
     courses = Course.objects.all()
@@ -551,4 +551,4 @@ def verifyPayment(request):
 def home_page_view(request):
     courses = Course.objects.filter(active=True)
     context = {'courses': courses}
-    return render(request, 'notes/home.html', context)
+    return render(request, 'user/home.html', context)

@@ -1,7 +1,7 @@
 from django import template
 import math
 
-from notes.models import UserCourse , Course ,Payment
+from notes.models import UserCourse , Course ,Payment,Customer
 register = template.Library()
 
 # 100 -> 10% --> mrp  - ( mrp * discount * 0.01 ) = selprice
@@ -23,7 +23,8 @@ def rupee(price):
 
 @register.simple_tag
 def is_enrolled(request , course):
-   
+    c=request.session["username"]
+    cus=Customer.objects.get(username=c)
     username = None
     if not request.username.is_authenticated:
         return False
