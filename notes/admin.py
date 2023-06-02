@@ -80,6 +80,4 @@ admin.site.register(Video)
 admin.site.register(Payment , PaymentAdmin)
 admin.site.register(UserCourse , UserCourseAdminModel)
 #chat
-admin.site.register(Chat)
-admin.site.register(Question)
-admin.site.register(Answer)
+admin.site.register(Rating)

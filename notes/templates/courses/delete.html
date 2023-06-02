@@ -5,7 +5,7 @@
 
             <h1>Delete Course</h1>
             <p>Are you sure you want to delete the course "{{ course.name }}"?</p>
-            <form method="post" action="{% url 'delete_course' slug=course.slug %}">
+            <form method="post" action="{% url 'deletecourse' slug=course.slug %}">
                 {% csrf_token %}
                 <input type="submit" class="Btn" value="Delete" />
                 <a href="{% url 'course_list' %}" class="Btn cancel">Cancel</a>

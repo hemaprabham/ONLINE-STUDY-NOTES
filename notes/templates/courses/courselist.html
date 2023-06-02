@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -162,10 +163,11 @@ body{
                 </div>-->
                 <BR>
                 <div class="bay">
-                    <a href="{% url 'edit_course' slug=course.slug %}">
+                    <a href="{% url 'editcourse' slug=course.slug %}">
+
                         <button>EDIT</button>
                     </a>
-                    <a href="{% url 'delete_course' slug=course.slug %}">
+                    <a href="{% url 'deletecourse' slug=course.slug %}">
                         <button>DELETE</button>
                     </a>
                     

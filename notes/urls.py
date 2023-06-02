@@ -24,8 +24,8 @@ urlpatterns = [
     path('favorites/',views.favorites, name='favorites'),
     #courses
     path('uploadcourse/',views.upload_course,name='courseupload'),
-    path('delete_course/<slug:slug>/', views.delete_course, name='delete_course'),
-    path('editcourse/<slug:slug>/',views.edit_course, name='edit_course'),
+    path('deletecourse/<slug:slug>/', views.deletecourse, name='deletecourse'),
+    path('editcourse/<slug:slug>/', views.editcourse, name='editcourse'),
     path('courselist/',views.course_list,name='course_list'),
     path('course_detail/<slug:slug>/',views.course_detail, name='course_detail'),
     path('coursedash/',views.coursedash,name='coursedash'),
@@ -70,6 +70,8 @@ urlpatterns = [
     path('checkout/<str:slug>/', views.checkout, name='checkout'),
     path('verify_payment',views.verifyPayment , name = 'verify_payment'),
 
+    #rating
+    path('course/<int:course_id>/',views.course_detaill, name='course_detail'),
     
 ]
 

@@ -521,7 +521,7 @@ span.logo-part{
         <div class="content">
           {% block content %}
     
-          <h1>UPLOAD VIDEO</h1>
+          <h1>Upload Videos</h1>
           <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
     
@@ -530,28 +530,29 @@ span.logo-part{
                 <label for="title">Title</label>
               </div>
               <div class="grid-65">
-                {{ form.title }}
+                {{ form.title}}
               </div>
             </fieldset>
             <fieldset>
               <div class="grid-35">
-                <label for="title">Thumbnail</label>
+                <label for="desc">Thumbnail</label>
               </div>
               <div class="grid-65">
-                {{ form.thumbnail }}
+                {{ form.thumbnail}}
               </div>
             </fieldset>
+            
             <fieldset>
               <div class="grid-35">
-                <label for="course">Course</label>
+                <label for="thumbnail" >Course</label>
               </div>
               <div class="grid-65">
-                {{ form.course }}
+                {{ form.course}}
               </div>
             </fieldset>
             <fieldset>
               <div class="grid-35">
-                <label for="serial_number">Serial Number</label>
+                <label for="pdf">Video part</label>
               </div>
               <div class="grid-65">
                 {{ form.serial_number }}
@@ -559,21 +560,22 @@ span.logo-part{
             </fieldset>
             <fieldset>
               <div class="grid-35">
-                <label for="video">Video</label>
+                <label for="desc">video</label>
               </div>
               <div class="grid-65">
-                {{ form.video }}
+                {{ form.video}}
               </div>
             </fieldset>
-            <input type="button" class="Btn cancel" value="Cancel" onclick="location.href='{% url 'videos_list'  %}'" />
-            <input type="submit" class="Btn" value="Save" />
+            <fieldset>
+              <input type="button" class="Btn cancel" value="Cancel" onclick="location.href='{% url 'videos_list' %}'" />
+              <input type="submit" class="Btn" value="Save" />
+            </fieldset>
           </form>
     
           {% endblock %}
         </div>
       </div>
     </div>
-    
     
   
   

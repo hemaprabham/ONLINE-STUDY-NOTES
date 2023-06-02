@@ -8,7 +8,6 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-import openai
 
 
 
@@ -55,7 +54,6 @@ def login(request):
                 if y == 'A':
                     return render(request, "notes/admin1.html")
                 else:   
-                    messages.success(request, f'Welcome "{u}" !')
                     return render(request, "notes/user.html")
         else:
             return render(request, "notes/login.html")
@@ -77,7 +75,6 @@ def upload(request):
             cus=Customer.objects.get(username=c) 
             post.username = cus
             post.save()
-            messages.success(request, f'Your document "{form.cleaned_data["title"]}" was uploaded successfully!')
             return redirect("uploaddash")
     else:
         form = PostForm()
@@ -89,13 +86,13 @@ def pdfedit(request, pk):
     cus = get_object_or_404(Customer, username=c)
     pdf = get_object_or_404(Post, pk=pk)
     if cus != pdf.username:  # check if the user owns the document
-        messages.error(request, "You don't have permission to edit this document.")
+        
         return redirect('uploaddash')
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES, instance=pdf)
         if form.is_valid():
             form.save()
-            messages.success(request, f'Your document "{form.cleaned_data["title"]}" was updated successfully!')
+            
             return redirect('uploaddash')
     else:
         form = PostForm(instance=pdf)
@@ -108,9 +105,7 @@ def delete(request, pk):
     pdf = get_object_or_404(Post, pk=pk)
     if cus == pdf.username:  # check if the user owns the document
         pdf.delete()
-        messages.success(request, "PDF file deleted successfully.")
-    else:
-        messages.error(request, "You don't have permission to delete this document.")
+        
     return redirect('uploaddash')
 
 def uploaddash(request):
@@ -137,10 +132,8 @@ def editprofile(request):
             user.password = password
             user.confirmpassword = confirm_password
         else:
-            messages.error(request, "Passwords do not match.")
             return redirect('profilee')
         user.save()
-        messages.success(request, "Profile updated successfully.")
         return render(request,"notes/user.html")
     else:
         # Render the edit profile form with the current user data
@@ -172,10 +165,8 @@ def add_to_favorites(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     favorite, created = Favorite.objects.get_or_create(username=cus, post=post)
     if created:
-        messages.success(request, 'Post added to favorites.')
         return render(request,'notes/popup.html')
     else:
-        messages.warning(request, 'Post is already in favorites.')
         return render(request,'notes/popup1.html')
     print("errorr3")    
     return redirect(request.META.get('HTTP_REFERER'))
@@ -193,12 +184,13 @@ def upload_course(request):
         form = CourseForm(request.POST, request.FILES)
         if form.is_valid():
             course = form.save()
+            messages.success(request, 'Course "{}" has been available'.format(course.name))
             return redirect('course_list')
     else:
         form = CourseForm()
     return render(request, 'courses/courseupload.html', {'form': form})
 
-def edit_course(request, slug):
+def editcourse(request, slug):
     course = get_object_or_404(Course, slug=slug)
     if request.method == 'POST':
         form = CourseForm(request.POST, request.FILES, instance=course)
@@ -209,7 +201,7 @@ def edit_course(request, slug):
         form = CourseForm(instance=course)
     return render(request, 'courses/editcourse.html', {'form': form})
 
-def delete_course(request, slug):
+def deletecourse(request, slug):
     course = get_object_or_404(Course, slug=slug)
     if request.method == 'POST':
         course.delete()
@@ -381,27 +373,13 @@ def admin1(request):
 
 
 #question
-def question_detail(request, question_id):
-    question = Question.objects.get(pk=question_id)
-    answers = Answer.objects.filter(question=question)
-    return render(request, 'question_detail.html', {'question': question, 'answers': answers})
-
-@login_required
-def answer_question(request, question_id):
-    question = Question.objects.get(pk=question_id)
-    if request.method == 'POST':
-        content = request.POST.get('content')
-        Answer.objects.create(question=question, content=content, user=request.user)
-        return redirect('question_detail', question_id=question_id)
-    return render(request, 'answer_question.html', {'question': question})
 
 
-#course userside
+
 #usercourse
 from django.views.generic import ListView
 from django.utils.decorators import method_decorator
 from django.shortcuts import HttpResponse
-
 
 
 class MyCoursesList(ListView):
@@ -436,11 +414,13 @@ def coursePage(request , slug):
                 user_course = UserCourse.objects.get(user = user  , course = course)
             except:
                 return  render(request , "user/check_out.html" , slug=course.clug )
-        
+    # Handle rating submission
+    # Prepare the context with the rating form    
     context = {
         "course" : course , 
         "video" : video , 
-        'videos':videos
+        'videos':videos,
+        
     }
     return  render(request , "user/course_page.html" , context=context )
 #checkout.py
@@ -450,7 +430,7 @@ from time import time
 from study.settings import *
 from notes.models import Course , Video , Payment , UserCourse,Customer
 from django.shortcuts import HttpResponse
-
+from time import time
 
 
 import razorpay
@@ -458,63 +438,59 @@ client = razorpay.Client(auth=(KEY_ID, KEY_SECRET))
 
 
 @login_required(login_url='/login')
-def checkout(request , slug):
-    c=request.session["username"]
-    cus=Customer.objects.get(username=c)
-    course = Course.objects.get(slug  = slug)
+def checkout(request, slug):
+    c = request.session["username"]
+    cus = Customer.objects.get(username=c)
+    course = Course.objects.get(slug=slug)
     user = cus
     action = request.GET.get('action')
     order = None
     payment = None
     error = None
     try:
-        user_course = UserCourse.objects.get(user = user  , course = course)
-        error = "You are Already Enrolled in this Course"
-    except:
+        user_course = UserCourse.objects.get(user=user, course=course)
+        error = "You are already enrolled in this course"
+    except UserCourse.DoesNotExist:
         pass
-    amount=None
-    if error is None : 
-        amount =  int((course.price - ( course.price * course.discount * 0.01 )) * 100)
-   # if amount is zero dont create paymenty , only save emrollment obbect 
+    amount = None
+    if error is None:
+        amount = int((course.price - (course.price * course.discount * 0.01)) * 100)
     
-    if amount==0:
-        userCourse = UserCourse(user = user , course = course)
+    # If amount is zero, don't create payment, only save enrollment object
+    if amount == 0:
+        userCourse = UserCourse(user=user, course=course)
         userCourse.save()
-        return render(request,'user/my_courses.html')   
-                # enroll direct
-    if action == 'create_payment':
-
-            currency = "INR"
-            notes = {
-                "email" : user.email, 
-                "name" : f'{user.name}'
-            }
-            reciept = f"notes-{int(time())}"
-            order = client.order.create(
-                {'receipt' :reciept , 
-                'notes' : notes , 
-                'amount' : amount ,
-                'currency' : currency
-                }
-            )
-
-            payment = Payment()
-            payment.user  = user
-            payment.course = course
-            payment.order_id = order.get('id')
-            payment.save()
-
-
+        return render(request, 'user/my_courses.html')
     
-    context = {
-        "course" : course , 
-        "order" : order, 
-        "payment" : payment, 
-        "user" : user , 
-        "error" : error
-    }
-    return  render(request , "user/check_out.html" , context=context )    
+    if action == 'create_payment':
+        currency = "INR"
+        notes = {
+            "email": user.email,
+            "name": f'{user.name}'
+        }
+        receipt = f"notes-{int(time())}"
+        order = client.order.create(
+            {
+                'receipt': receipt,
+                'notes': notes,
+                'amount': amount,
+                'currency': currency
+            }
+        )
+        payment = Payment()
+        payment.user = user
+        payment.course = course
+        payment.order_id = order.get('id')
+        payment.save()
 
+    context = {
+        "course": course,
+        "order": order,
+        "payment": payment,
+        "user": user,
+        "error": error
+    }
+    return render(request, "user/check_out.html", context=context)
 #verify payment
 @csrf_exempt
 def verifyPayment(request):
@@ -550,3 +526,17 @@ def home_page_view(request):
     courses = Course.objects.filter(active=True)
     context = {'courses': courses}
     return render(request, 'user/home.html', context)
+
+#rating
+from django.db.models import Avg
+def course_detaill(request, course_id):
+    course = Course.objects.get(id=course_id)
+    ratings = Rating.objects.filter(Course=course)
+    avg_rating = ratings.aggregate(Avg('rating')).get('rating__avg')
+
+    context = {
+        'course': course,
+        'ratings': ratings,
+        'avg_rating': avg_rating,
+    }
+    return render(request, 'rating/course_detail.html', context)

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .stars {
+            display: inline-block;
+            unicode-bidi: bidi-override;
+            color: #888888;
+            font-size: 30px;
+            height: 30px;
+            width: 150px;
+        }
+        .stars::before {
+            content: "★★★★★";
+            position: absolute;
+            opacity: 0.3;
+        }
+        .stars::after {
+            content: "★★★★★";
+            unicode-bidi: bidi-override;
+            color: #FFD700;
+            position: absolute;
+            z-index: 1;
+            width: {{ avg_rating|floatmultiply:30|floatformat:0 }}px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <h1>Course Detail</h1>
+    <h2>{{ course.name }}</h2>
+    <div class="stars">
+        <span style="width: {{ avg_rating|floatmultiply:30|floatformat:0 }}px;"></span>
+    </div>
+    <p>Average Rating: {{ avg_rating }}</p>
+    <h3>Customer Ratings</h3>
+    <ul>
+        {% for rating in ratings %}
+            <li>{{ rating.Customer.name }} - {{ rating.rating }} stars</li>
+        {% empty %}
+            <li>No ratings available</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -2,46 +2,46 @@
 {% load static %}
 {% load course_custom_tags %}
 
-{%block title%}
+{% block title %}
 Courses
 {% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'courses/css/scrollbar.css'%}">
+<style>
+    .no-preview {
+        cursor: not-allowed;
+    }
 
+    a:hover {
+        text-decoration: none;
+    }
+
+    a {
+        color: rgb(61, 59, 59);
+    }
+
+    .active-video-link {
+        color: rgb(206, 202, 196);
+    }
+
+    .active-video-link:hover {
+        text-decoration: none;
+        color: rgb(255, 255, 255);
+    }
+
+    </style>
 {% endblock %}
 
 {% block js %}
 <script src="{% static 'courses/js/course_page.js' %}"></script>
 {% endblock %}
 
-{%block content%}
+{% block content %}
 
-<style>
-    .no-preview{
-        cursor: not-allowed;
-    }   
-    a:hover{
-        text-decoration: none;
-    }
-
-    a{
-        color: rgb(61, 59, 59);
-    }
-
-    .active-video-link{
-        color: rgb(206, 202, 196);
-    }
-
-    .active-video-link:hover{
-        text-decoration: none;
-        color: rgb(255, 255, 255);
-    }
-    
-</style>
 <div class="container-fluid">
     <div>
-        
+
         <br>
 
         <div class="card p-3">
@@ -50,28 +50,26 @@ Courses
                 <div class="col">
                     <div class="mx-auto">
                         <div class="mx-auto">
-                            <a href='{{ video.video.url}}'><img src="{{ video.thumbnail.url }}" alt="{{ video.title }}" class="mx-auto" width="100%" height="315"></a>
-                        </div>                        
+                            <a href='{{ video.video.url}}'><img src="{{ video.thumbnail.url }}"
+                                    alt="{{ video.title }}" class="mx-auto" width="100%" height="315"></a>
+                        </div>
+
                     </div>
                 </div>
-
+                
                 <!-- leacture list -->
                 <div class="col-3">
                     <ul id='video_list' class="list-group overflow-y-scroll">
 
                         {% is_enrolled request course as enrolled %}
                         {% for v in videos %}
-                            <li
-                             class="list-group-item {% if v == video %} active-video {% endif %} ">
-                             <a class="
-                             
-                             {% if not enrolled and not v.is_preview %} text-muted no-preview {% endif %}
-                             {% if v == video %} active-video-link {% endif %}
-                             
-                             " href="?lecture={{v.serial_number}}">
-                                 {{v}}
-                                </a>
-                            </li>
+                        <li class="list-group-item {% if v == video %} active-video {% endif %} ">
+                            <a class="{% if not enrolled and not v.is_preview %} text-muted no-preview {% endif %}
+                                {% if v == video %} active-video-link {% endif %}"
+                                href="?lecture={{v.serial_number}}">
+                                {{v}}
+                            </a>
+                        </li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -97,11 +95,11 @@ Courses
                 <div class="card-body">
                     <h5 class="card-title">Prerequisite</h5>
                     <p class="card-text">
-                    <ol>
-                        {% for pre in course.prerequisite_set.all %}
-                        <li class="">{{pre.description}}</li>
-                        {% endfor %}
-                    </ol>
+                        <ol>
+                            {% for pre in course.prerequisite_set.all %}
+                            <li class="">{{pre.description}}</li>
+                            {% endfor %}
+                        </ol>
                     </p>
                 </div>
             </div>
@@ -113,11 +111,11 @@ Courses
                 <div class="card-body">
                     <h5 class="card-title">Learnings</h5>
                     <p class="card-text">
-                    <ol>
-                        {% for l in course.learning_set.all %}
-                        <li class="">{{l.description}}</li>
-                        {% endfor %}
-                    </ol>
+                        <ol>
+                            {% for l in course.learning_set.all %}
+                            <li class="">{{l.description}}</li>
+                            {% endfor %}
+                        </ol>
                     </p>
                 </div>
             </div>
@@ -127,10 +125,9 @@ Courses
         <br>
         <br>
         <br>
-
-    </div>
-
+        <!--rating-->
+        <!--rating-->
+        
 </div>
 
-{%endblock%}
-
+{% endblock %}

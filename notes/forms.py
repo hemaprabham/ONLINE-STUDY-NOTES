@@ -63,7 +63,7 @@ class LearningForm(forms.ModelForm):
 
 class VideoForm(forms.ModelForm):
     class Meta:
-        model = Learning
+        model = Video
         fields = '__all__'                    
-        
+
         
