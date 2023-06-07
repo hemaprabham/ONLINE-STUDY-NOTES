@@ -142,10 +142,7 @@ def editprofile(request):
 def profilee(request):
     return render(request,'notes/profileedit.html')
 
-#notifications views
-def notifications(request):
-    notifications = Notification.objects.all().order_by('-timestamp')
-    return render(request, 'notes/notification.html', {'notifications': notifications})
+
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     return render(request, 'notes/post_detail.html', {'post': post})   
@@ -411,9 +408,9 @@ def coursePage(request , slug):
             cus=Customer.objects.get(username=c)
             user=cus
             try:
-                user_course = UserCourse.objects.get(user = user  , course = course)
+                user_course = UserCourse.objects.get(user = cus , course = course)
             except:
-                return  render(request , "user/check_out.html" , slug=course.clug )
+                return  render(request , "user/check_out.html" , slug=course.slug )
     # Handle rating submission
     # Prepare the context with the rating form    
     context = {
@@ -540,3 +537,8 @@ def course_detaill(request, course_id):
         'avg_rating': avg_rating,
     }
     return render(request, 'rating/course_detail.html', context)
+
+#notifications views
+def notifications(request):
+    messages.success(request, 'Notification message.')
+    return render(request, 'notes/notification.html', {'notifications': notifications})
